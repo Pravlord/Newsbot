@@ -1,0 +1,60 @@
+# NewsWrite Bot Configuration
+
+# RSS Feeds Configuration
+# Add new feeds here - no code changes needed!
+# Simply add a new entry with name, url, and enabled flag
+rss_feeds:
+  - name: "MarineLink"
+    url: "https://www.marinelink.com/news/rss"
+    enabled: true
+  - name: "BBC News"
+    url: "http://feeds.bbci.co.uk/news/rss.xml"
+    enabled: false  # Disable if you don't want this feed
+  # Add more feeds here:
+  # - name: "Reuters"
+  #   url: "https://www.reuters.com/rssFeed/worldNews"
+  #   enabled: true
+
+# LLM Configuration (OpenRouter)
+llm:
+  provider: "openrouter"  # Using OpenRouter for model access
+  api_key_env: "OPENROUTER_API_KEY"  # Environment variable name
+  model: "google/gemini-2.0-flash-lite-001"  # OpenRouter model format: provider/model
+  # Alternative models you can use:
+  # - "anthropic/claude-3-opus"
+  # - "google/gemini-pro"
+  # - "meta-llama/llama-3-70b-instruct"
+  temperature: 0.7
+  max_tokens: 500
+
+# Processing Settings
+processing:
+  check_interval_minutes: 5   # How often to check RSS feeds (in minutes)
+  max_articles_per_run: 10    # Limit articles processed per workflow run
+  image_extraction: true      # Enable image scraping from article pages
+  
+  # LLM Rewrite Prompt Template
+  rewrite_prompt: |
+    You are a professional news writer. Write exactly ONE short social media post.
+    
+    STRICT RULES:
+    - Maximum 280 characters total
+    - Semi-professional, industry news tone
+    - ABSOLUTELY NO emojis
+    - End with 2-3 hashtags
+    - Preserve key facts
+    - DO NOT provide multiple options
+    - DO NOT include headers like "Post 1:" or "Option:"
+    - Output ONLY the single post text
+    
+    Write the post now:
+
+# Output Configuration
+output:
+  format: "json"  # Output format
+  directory: "data/output"  # Backup directory for JSON files
+  webhook_url: "http://localhost:8000/posts"  # Local social posting service
+  # Start the service with: uvicorn social_post_service:app --port 8000
+  include_original: false  # Include original article content in output (for debugging)
+
+
