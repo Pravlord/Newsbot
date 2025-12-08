@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class FacebookClient:
     """Post to a Facebook Page using the Graph API."""
     
-    GRAPH_API_VERSION = "v18.0"
+    GRAPH_API_VERSION = "v21.0"
     GRAPH_API_BASE = f"https://graph.facebook.com/{GRAPH_API_VERSION}"
     
     def __init__(self):
