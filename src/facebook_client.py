@@ -41,10 +41,22 @@ class FacebookClient:
         """
         Post to the Facebook Page.
         
+        We intentionally use the Page feed endpoint (`/{page-id}/feed`) for all
+        posts so that they appear in the main \"Posts\"/timeline view, just like
+        manual posts made on the Page UI.
+        
+        Notes:
+        - `link` is passed to the feed endpoint, which lets Facebook generate
+          a link preview (including an image) using the article's Open Graph
+          metadata.
+        - `image_url` is currently ignored here. If needed in the future we
+          can re-introduce photo posts via `/{page-id}/photos`, but those tend
+          to show up primarily under the Photos tab rather than the main feed.
+        
         Args:
             message: The post text
             link: Optional URL to include (will generate link preview)
-            image_url: Optional image URL to attach
+            image_url: Optional image URL (currently unused; kept for API compatibility)
         
         Returns:
             dict with keys:
@@ -56,12 +68,9 @@ class FacebookClient:
             return {"ok": False, "error": "Facebook client not configured"}
         
         try:
-            # If we have an image URL, post as a photo
-            if image_url:
-                return self._post_photo(message, image_url, link)
-            else:
-                return self._post_feed(message, link)
-                
+            # Always post to the Page feed so posts appear in the main feed.
+            # Facebook will generate a link preview (with image) from `link`.
+            return self._post_feed(message, link)
         except Exception as e:
             logger.error(f"Facebook post error: {e}")
             return {"ok": False, "error": str(e)}
